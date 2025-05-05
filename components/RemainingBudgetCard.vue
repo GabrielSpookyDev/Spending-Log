@@ -6,7 +6,7 @@ defineProps<{
   totalRemaining: number;
 }>();
 
-const { formatCurrency } = useFormatters();
+const { formatCurrency, formatMonthYear } = useFormatters();
 </script>
 
 <template>
@@ -34,12 +34,7 @@ const { formatCurrency } = useFormatters();
       }}</span>
     </p>
     <p class="mt-4 text-sm text-gray-500">
-      {{
-        new Date().toLocaleDateString("en-US", {
-          month: "long",
-          year: "numeric",
-        })
-      }}
+      {{ formatMonthYear(new Date()) }}
     </p>
   </UCard>
 </template>

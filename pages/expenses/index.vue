@@ -14,7 +14,7 @@ interface ExpenseGroup {
 
 const spendingStore = useSpendingStore();
 const { expenses } = storeToRefs(spendingStore);
-const { formatCurrency } = useFormatters();
+const { formatCurrency, formatDate, formatMonthYear } = useFormatters();
 
 // Sort expenses by date (newest first)
 const sortedExpenses = computed(() => {
@@ -29,10 +29,7 @@ const groupedExpenses = computed<ExpenseGroup[]>(() => {
 
   sortedExpenses.value.forEach((expense) => {
     const date = new Date(expense.date);
-    const monthYear = date.toLocaleDateString("en-US", {
-      month: "long",
-      year: "numeric",
-    });
+    const monthYear = formatMonthYear(date);
 
     if (!groups[monthYear]) {
       groups[monthYear] = {
@@ -62,16 +59,6 @@ function deleteExpense(id: string) {
   if (confirm("Are you sure you want to delete this expense?")) {
     spendingStore.removeExpense(id);
   }
-}
-
-// Format date
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  });
 }
 </script>
 

@@ -4,7 +4,7 @@ import { useFormatters } from "~/composables/useFormatters";
 import CircleIcon from "~/components/CircleIcon.vue";
 
 const spendingStore = useSpendingStore();
-const { formatCurrency } = useFormatters();
+const { formatCurrency, formatDate } = useFormatters();
 
 const newExpense = reactive({
   amount: 0,
@@ -142,13 +142,7 @@ function saveExpense() {
                   {{ newExpense.description || "No description" }}
                 </div>
                 <div class="text-sm text-gray-500">
-                  {{
-                    new Date(newExpense.date).toLocaleDateString("en-US", {
-                      weekday: "short",
-                      month: "short",
-                      day: "numeric",
-                    })
-                  }}
+                  {{ formatDate(newExpense.date) }}
                   <span v-if="newExpense.category">
                     •
                     {{

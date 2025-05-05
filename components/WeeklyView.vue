@@ -2,7 +2,7 @@
 import { useFormatters } from "~/composables/useFormatters";
 import { computed } from "vue";
 
-const { formatCurrency } = useFormatters();
+const { formatCurrency, formatDate } = useFormatters();
 
 interface SpendingDay {
   date: string;
@@ -25,11 +25,7 @@ const props = defineProps<{
 // Transform the data for UTable
 const tableData = computed<TableRow[]>(() => {
   return props.currentWeek.map((day: SpendingDay) => ({
-    date: new Date(day.date).toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    }),
+    date: formatDate(day.date),
     budget: formatCurrency(day.budget),
     spent: formatCurrency(day.spent),
     remaining: formatCurrency(day.remaining),

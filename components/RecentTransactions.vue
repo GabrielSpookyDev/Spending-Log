@@ -6,7 +6,7 @@ import CircleIcon from "~/components/CircleIcon.vue";
 
 const spendingStore = useSpendingStore();
 const { expenses } = storeToRefs(spendingStore);
-const { formatCurrency } = useFormatters();
+const { formatCurrency, formatDate } = useFormatters();
 
 // Recent transactions
 const recentTransactions = computed(() => {
@@ -63,13 +63,7 @@ const recentTransactions = computed(() => {
             <div>
               <p class="font-medium">{{ transaction.description }}</p>
               <p class="text-xs text-gray-500">
-                {{
-                  new Date(transaction.date).toLocaleDateString("en-US", {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                  })
-                }}
+                {{ formatDate(transaction.date) }}
                 •
                 {{
                   transaction.category.charAt(0).toUpperCase() +
