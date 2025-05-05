@@ -2,9 +2,16 @@
 import CircleIcon from "~/components/CircleIcon.vue";
 
 const emit = defineEmits(["export-data"]);
+const toast = useToast();
 
 function exportData() {
   emit("export-data");
+
+  toast.add({
+    title: "Success",
+    description: "Data exported successfully!",
+    color: "success",
+  });
 }
 </script>
 
