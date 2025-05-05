@@ -1,7 +1,9 @@
 <script setup>
+import { computed } from "vue";
+
 const route = useRoute();
 
-const navigationItems = [
+const navigationItems = computed(() => [
   {
     name: "Dashboard",
     to: "/",
@@ -20,7 +22,7 @@ const navigationItems = [
     icon: "i-heroicons-cog-6-tooth",
     active: route.path === "/settings",
   },
-];
+]);
 </script>
 
 <template>

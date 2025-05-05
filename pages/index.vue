@@ -16,6 +16,12 @@ const totalRemaining = computed(
 
 // Calculate percentage spent and color
 const percentageSpent = computed(() => {
+  if (
+    !monthlyBudget.value ||
+    !monthlyBudget.value.amount ||
+    totalSpent.value === undefined
+  )
+    return 0;
   if (monthlyBudget.value.amount === 0) return 0;
   return Math.min(
     Math.round((totalSpent.value / monthlyBudget.value.amount) * 100),
@@ -94,7 +100,7 @@ const recentTransactions = computed(() => {
               {{ formatCurrency(monthlyBudget.amount) }}</span
             >
           </div>
-          <UProgress :value="percentageSpent" :color="progressColor" />
+          <UProgress v-model="percentageSpent" :color="progressColor" />
         </div>
       </UCard>
 
