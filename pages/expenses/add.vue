@@ -120,7 +120,7 @@ function saveExpense() {
         <UFormField label="Category">
           <USelect
             v-model="newExpense.category"
-            :options="categories"
+            :items="categories"
             :icon="selectedCategoryIcon"
           />
         </UFormField>

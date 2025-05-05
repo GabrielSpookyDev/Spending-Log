@@ -2,6 +2,22 @@ import { defineStore } from "pinia";
 import { ref, computed, watch } from "vue";
 import type { MonthlyBudget, Expense, SpendingDay } from "~/types";
 
+// Define months as a constant at the top level of the store
+export const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 export const useSpendingStore = defineStore("spending", () => {
   const monthlyBudget = ref<MonthlyBudget>({
     amount: 0,
@@ -23,20 +39,6 @@ export const useSpendingStore = defineStore("spending", () => {
 
   // Helper function to get month index from name
   function getMonthIndex(monthName: string): number {
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
     return months.findIndex(
       (month) => month.toLowerCase() === monthName.toLowerCase()
     );
@@ -219,6 +221,7 @@ export const useSpendingStore = defineStore("spending", () => {
     spendingDays,
     daysInMonth,
     categories,
+    months,
     setMonthlyBudget,
     addExpense,
     removeExpense,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSpendingStore } from "~/stores/spending";
+import { useSpendingStore, months } from "~/stores/spending";
 import { storeToRefs } from "pinia";
 import { useFormatters } from "~/composables/useFormatters";
 import CircleIcon from "~/components/CircleIcon.vue";
@@ -9,20 +9,6 @@ const { monthlyBudget } = storeToRefs(spendingStore);
 const { formatCurrency } = useFormatters();
 
 const budgetAmount = ref(monthlyBudget.value.amount);
-const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 const selectedMonth = ref(monthlyBudget.value.month);
 const selectedYear = ref(monthlyBudget.value.year);
 
@@ -116,7 +102,7 @@ const hasChanges = computed(() => {
               <div class="grid grid-cols-2 gap-2">
                 <USelect
                   v-model="selectedMonth"
-                  :options="
+                  :items="
                     months.map((month) => ({ label: month, value: month }))
                   "
                   placeholder="Select month"
@@ -124,7 +110,7 @@ const hasChanges = computed(() => {
                 />
                 <USelect
                   v-model="selectedYear"
-                  :options="
+                  :items="
                     years.map((year) => ({
                       label: year.toString(),
                       value: year,
