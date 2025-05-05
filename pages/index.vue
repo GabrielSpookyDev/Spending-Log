@@ -322,7 +322,7 @@ const recentTransactions = computed(() => {
         <h3 class="text-lg font-medium">Monthly Spending Overview</h3>
       </template>
 
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto overflow-y-auto max-h-96">
         <table class="w-full">
           <thead>
             <tr class="border-b">
