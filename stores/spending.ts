@@ -18,20 +18,31 @@ export const months = [
   "December",
 ];
 
-export const useSpendingStore = defineStore("spending", () => {
-  const monthlyBudget = ref<MonthlyBudget>({
+// Define state interface
+interface SpendingState {
+  monthlyBudget: MonthlyBudget;
+  expenses: Expense[];
+}
+
+// Create default state
+const createDefaultState = (): SpendingState => ({
+  monthlyBudget: {
     amount: 0,
     month: new Date().toLocaleString("default", { month: "long" }),
     year: new Date().getFullYear(),
-  });
+  },
+  expenses: [],
+});
 
-  const expenses = ref<Expense[]>([]);
+export const useSpendingStore = defineStore("spending", () => {
+  // Single state object for all data
+  const state = ref<SpendingState>(createDefaultState());
 
   // Calculate days in current month
   const daysInMonth = computed(() => {
     const date = new Date(
-      monthlyBudget.value.year,
-      getMonthIndex(monthlyBudget.value.month) + 1,
+      state.value.monthlyBudget.year,
+      getMonthIndex(state.value.monthlyBudget.month) + 1,
       0
     );
     return date.getDate();
@@ -46,12 +57,12 @@ export const useSpendingStore = defineStore("spending", () => {
 
   // Get daily budget - recalculated based on past spending
   const dailyBudget = computed(() => {
-    if (!monthlyBudget.value.amount) return 0;
+    if (!state.value.monthlyBudget.amount) return 0;
 
     const today = new Date();
     const remainingDays = getDaysLeftInMonth(today);
     const spentSoFar = getTotalSpentThisMonth();
-    const remainingBudget = monthlyBudget.value.amount - spentSoFar;
+    const remainingBudget = state.value.monthlyBudget.amount - spentSoFar;
 
     return remainingDays ? remainingBudget / remainingDays : 0;
   });
@@ -73,7 +84,7 @@ export const useSpendingStore = defineStore("spending", () => {
       const dateString = date.toISOString().split("T")[0];
 
       // Calculate spent for this day
-      const spentToday = expenses.value
+      const spentToday = state.value.expenses
         .filter((expense) => expense.date === dateString)
         .reduce((sum, expense) => sum + expense.amount, 0);
 
@@ -81,7 +92,8 @@ export const useSpendingStore = defineStore("spending", () => {
       totalSpentSoFar += spentToday;
 
       // Calculate remaining budget after this day
-      const remainingBudget = monthlyBudget.value.amount - totalSpentSoFar;
+      const remainingBudget =
+        state.value.monthlyBudget.amount - totalSpentSoFar;
       const daysRemaining = daysInMonth.value - day;
 
       // Calculate daily budget for remaining days
@@ -128,7 +140,7 @@ export const useSpendingStore = defineStore("spending", () => {
     const firstDayStr = firstDay.toISOString().split("T")[0];
     const lastDayStr = lastDay.toISOString().split("T")[0];
 
-    return expenses.value
+    return state.value.expenses
       .filter((expense) => {
         return expense.date >= firstDayStr && expense.date <= lastDayStr;
       })
@@ -176,47 +188,62 @@ export const useSpendingStore = defineStore("spending", () => {
 
   // Actions
   function setMonthlyBudget(amount: number) {
-    monthlyBudget.value.amount = amount;
+    state.value.monthlyBudget.amount = amount;
   }
 
   function addExpense(expense: Omit<Expense, "id">) {
     const id = Date.now().toString();
-    expenses.value.push({ ...expense, id });
+    state.value.expenses.push({ ...expense, id });
   }
 
   function removeExpense(id: string) {
-    expenses.value = expenses.value.filter((expense) => expense.id !== id);
-  }
-
-  // Persist state to local storage
-  if (import.meta.client) {
-    const savedBudget = localStorage.getItem("monthlyBudget");
-    const savedExpenses = localStorage.getItem("expenses");
-
-    if (savedBudget) {
-      monthlyBudget.value = JSON.parse(savedBudget);
-    }
-
-    if (savedExpenses) {
-      expenses.value = JSON.parse(savedExpenses);
-    }
-
-    watch(
-      [monthlyBudget, expenses],
-      () => {
-        localStorage.setItem(
-          "monthlyBudget",
-          JSON.stringify(monthlyBudget.value)
-        );
-        localStorage.setItem("expenses", JSON.stringify(expenses.value));
-      },
-      { deep: true }
+    state.value.expenses = state.value.expenses.filter(
+      (expense) => expense.id !== id
     );
   }
 
+  // Load state from localStorage
+  function loadState() {
+    if (!import.meta.client) return;
+
+    try {
+      const savedState = localStorage.getItem("spendingState");
+      if (savedState) {
+        state.value = JSON.parse(savedState);
+      }
+    } catch (error) {
+      console.error("Failed to load state from localStorage:", error);
+      // Reset to default state if loading fails
+      state.value = createDefaultState();
+    }
+  }
+
+  // Save state to localStorage
+  function saveState() {
+    if (!import.meta.client) return;
+
+    try {
+      localStorage.setItem("spendingState", JSON.stringify(state.value));
+    } catch (error) {
+      console.error("Failed to save state to localStorage:", error);
+    }
+  }
+
+  // Initialize state
+  loadState();
+
+  // Watch for changes and persist to localStorage
+  watch(
+    () => state.value,
+    () => {
+      saveState();
+    },
+    { deep: true }
+  );
+
   return {
-    monthlyBudget,
-    expenses,
+    monthlyBudget: computed(() => state.value.monthlyBudget),
+    expenses: computed(() => state.value.expenses),
     dailyBudget,
     spendingDays,
     daysInMonth,
