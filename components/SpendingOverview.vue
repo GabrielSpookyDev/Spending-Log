@@ -26,14 +26,14 @@ const availableYears = computed(() => {
 // Define interfaces for spending data
 interface MonthlySpending {
   month: string;
-  spent: number;
-  count: number;
+  transactions: number;
+  totalSpent: string;
 }
 
 interface YearlySpending {
   year: number;
-  spent: number;
-  count: number;
+  totalSpent: string;
+  transactions: number;
 }
 
 // Calculate monthly spending data
@@ -63,8 +63,8 @@ const monthlySpendingData = computed<MonthlySpending[]>(() => {
 
     monthlyData.push({
       month: monthName,
-      spent: totalSpent,
-      count: monthExpenses.length,
+      transactions: monthExpenses.length,
+      totalSpent: formatCurrency(totalSpent),
     });
   }
 
@@ -91,8 +91,8 @@ const yearlySpendingData = computed<YearlySpending[]>(() => {
 
     yearlyData.push({
       year,
-      spent: totalSpent,
-      count: yearExpenses.length,
+      transactions: yearExpenses.length,
+      totalSpent: formatCurrency(totalSpent),
     });
   });
 
@@ -135,60 +135,7 @@ const yearlySpendingData = computed<YearlySpending[]>(() => {
         />
       </div>
 
-      <div class="overflow-x-auto overflow-y-auto max-h-96">
-        <table class="w-full">
-          <thead>
-            <tr class="border-b">
-              <th class="text-left py-2 px-2">Month</th>
-              <th class="text-right py-2 px-2">Transactions</th>
-              <th class="text-right py-2 px-2">Total Spent</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(month, index) in monthlySpendingData"
-              :key="index"
-              class="border-b last:border-none hover:bg-gray-50 dark:hover:bg-gray-800"
-              :class="
-                month.month ===
-                  new Date().toLocaleString('default', { month: 'long' }) &&
-                selectedYear === new Date().getFullYear()
-                  ? 'bg-blue-50 dark:bg-blue-900/20'
-                  : ''
-              "
-            >
-              <td class="py-3 px-2">{{ month.month }}</td>
-              <td class="py-3 px-2 text-right">{{ month.count }}</td>
-              <td class="py-3 px-2 text-right">
-                {{ formatCurrency(month.spent) }}
-              </td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr class="font-medium bg-gray-50 dark:bg-gray-800">
-              <td class="py-3 px-2">Total</td>
-              <td class="py-3 px-2 text-right">
-                {{
-                  monthlySpendingData.reduce(
-                    (sum, month) => sum + month.count,
-                    0
-                  )
-                }}
-              </td>
-              <td class="py-3 px-2 text-right">
-                {{
-                  formatCurrency(
-                    monthlySpendingData.reduce(
-                      (sum, month) => sum + month.spent,
-                      0
-                    )
-                  )
-                }}
-              </td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+      <UTable :data="monthlySpendingData" />
     </div>
 
     <!-- Yearly Spending Overview -->
@@ -196,50 +143,7 @@ const yearlySpendingData = computed<YearlySpending[]>(() => {
       v-if="overviewTab === 'yearly'"
       class="overflow-x-auto overflow-y-auto max-h-96"
     >
-      <table class="w-full">
-        <thead>
-          <tr class="border-b">
-            <th class="text-left py-2 px-2">Year</th>
-            <th class="text-right py-2 px-2">Transactions</th>
-            <th class="text-right py-2 px-2">Total Spent</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="yearData in yearlySpendingData"
-            :key="yearData.year"
-            class="border-b last:border-none hover:bg-gray-50 dark:hover:bg-gray-800"
-            :class="
-              yearData.year === new Date().getFullYear()
-                ? 'bg-blue-50 dark:bg-blue-900/20'
-                : ''
-            "
-          >
-            <td class="py-3 px-2">{{ yearData.year }}</td>
-            <td class="py-3 px-2 text-right">{{ yearData.count }}</td>
-            <td class="py-3 px-2 text-right">
-              {{ formatCurrency(yearData.spent) }}
-            </td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr class="font-medium bg-gray-50 dark:bg-gray-800">
-            <td class="py-3 px-2">Total</td>
-            <td class="py-3 px-2 text-right">
-              {{
-                yearlySpendingData.reduce((sum, year) => sum + year.count, 0)
-              }}
-            </td>
-            <td class="py-3 px-2 text-right">
-              {{
-                formatCurrency(
-                  yearlySpendingData.reduce((sum, year) => sum + year.spent, 0)
-                )
-              }}
-            </td>
-          </tr>
-        </tfoot>
-      </table>
+      <UTable :data="yearlySpendingData" />
     </div>
   </UCard>
 </template>
