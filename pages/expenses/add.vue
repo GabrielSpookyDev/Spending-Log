@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useSpendingStore } from "~/stores/spending";
+import { useFormatters } from "~/composables/useFormatters";
 
 const spendingStore = useSpendingStore();
+const { formatCurrency } = useFormatters();
 
 const newExpense = reactive({
   amount: 0,
@@ -11,17 +13,39 @@ const newExpense = reactive({
 });
 
 const categories = [
-  { label: "General", value: "general" },
-  { label: "Food", value: "food" },
-  { label: "Transportation", value: "transportation" },
-  { label: "Entertainment", value: "entertainment" },
-  { label: "Utilities", value: "utilities" },
-  { label: "Shopping", value: "shopping" },
-  { label: "Health", value: "health" },
-  { label: "Other", value: "other" },
+  { label: "General", value: "general", icon: "i-heroicons-cube" },
+  { label: "Food & Dining", value: "food", icon: "i-heroicons-cake" },
+  {
+    label: "Transportation",
+    value: "transportation",
+    icon: "i-heroicons-truck",
+  },
+  { label: "Entertainment", value: "entertainment", icon: "i-heroicons-film" },
+  { label: "Utilities", value: "utilities", icon: "i-heroicons-bolt" },
+  { label: "Shopping", value: "shopping", icon: "i-heroicons-shopping-bag" },
+  { label: "Health", value: "health", icon: "i-heroicons-heart" },
+  { label: "Housing", value: "housing", icon: "i-heroicons-home" },
+  { label: "Travel", value: "travel", icon: "i-heroicons-globe-alt" },
+  { label: "Education", value: "education", icon: "i-heroicons-academic-cap" },
+  {
+    label: "Other",
+    value: "other",
+    icon: "i-heroicons-ellipsis-horizontal-circle",
+  },
 ];
 
+const selectedCategoryIcon = computed(() => {
+  const category = categories.find((c) => c.value === newExpense.category);
+  return category ? category.icon : "i-heroicons-cube";
+});
+
+const isValid = computed(() => {
+  return newExpense.amount > 0 && newExpense.description.trim() !== "";
+});
+
 function saveExpense() {
+  if (!isValid.value) return;
+
   spendingStore.addExpense(newExpense);
   navigateTo("/");
 }
@@ -31,43 +55,98 @@ function saveExpense() {
   <div>
     <UCard>
       <template #header>
-        <div class="flex justify-between items-center">
-          <h2 class="text-lg font-bold">Add Expense</h2>
-          <UButton to="/" icon="i-heroicons-home" variant="ghost" />
+        <div class="flex items-center">
+          <div class="p-2 rounded-full bg-blue-100 mr-3">
+            <Icon name="i-heroicons-plus" class="text-blue-600 w-5 h-5" />
+          </div>
+          <h2 class="text-lg font-medium">Add Expense</h2>
         </div>
       </template>
 
-      <div class="p-4 space-y-4">
-        <UFormGroup label="Amount">
-          <UInput
-            v-model="newExpense.amount"
-            type="number"
-            placeholder="Enter amount"
-            min="0"
-            step="0.01"
-          />
+      <div class="space-y-6 py-4">
+        <!-- Amount input -->
+        <UFormGroup label="Amount" required>
+          <UInputAddon>
+            <span class="text-gray-500">$</span>
+            <UInput
+              v-model="newExpense.amount"
+              type="number"
+              placeholder="0.00"
+              min="0"
+              step="0.01"
+              class="pl-1"
+            />
+          </UInputAddon>
         </UFormGroup>
 
-        <UFormGroup label="Description">
+        <!-- Description input -->
+        <UFormGroup label="Description" required>
           <UInput
             v-model="newExpense.description"
             placeholder="What did you spend on?"
           />
         </UFormGroup>
 
+        <!-- Date input -->
         <UFormGroup label="Date">
           <UInput v-model="newExpense.date" type="date" />
         </UFormGroup>
 
+        <!-- Category input -->
         <UFormGroup label="Category">
-          <USelect v-model="newExpense.category" :options="categories" />
+          <USelect
+            v-model="newExpense.category"
+            :options="categories"
+            :icon="selectedCategoryIcon"
+          />
         </UFormGroup>
+
+        <!-- Preview card -->
+        <div class="mt-6">
+          <h3 class="text-md font-medium mb-4">Expense Preview</h3>
+          <div
+            class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
+          >
+            <div class="flex items-center mb-3">
+              <Icon
+                :name="selectedCategoryIcon"
+                class="bg-gray-200 dark:bg-gray-700 p-2 rounded-full mr-3 w-10 h-10"
+              />
+              <div>
+                <div class="font-medium">
+                  {{ newExpense.description || "No description" }}
+                </div>
+                <div class="text-sm text-gray-500">
+                  {{
+                    new Date(newExpense.date).toLocaleDateString("en-US", {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                    })
+                  }}
+                  <span v-if="newExpense.category">
+                    •
+                    {{
+                      categories.find((c) => c.value === newExpense.category)
+                        ?.label
+                    }}
+                  </span>
+                </div>
+              </div>
+              <div class="ml-auto font-medium text-red-600 text-lg">
+                -{{ formatCurrency(newExpense.amount) }}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton to="/" variant="ghost"> Cancel </UButton>
-          <UButton color="primary" @click="saveExpense"> Save Expense </UButton>
+          <UButton to="/" color="neutral" variant="ghost"> Cancel </UButton>
+          <UButton color="primary" :disabled="!isValid" @click="saveExpense">
+            Save Expense
+          </UButton>
         </div>
       </template>
     </UCard>

@@ -141,6 +141,37 @@ export const useSpendingStore = defineStore("spending", () => {
     return lastDay - date.getDate() + 1; // Include current day
   }
 
+  // Categories
+  const categories = [
+    { label: "General", value: "general", icon: "i-heroicons-cube" },
+    { label: "Food & Dining", value: "food", icon: "i-heroicons-cake" },
+    {
+      label: "Transportation",
+      value: "transportation",
+      icon: "i-heroicons-truck",
+    },
+    {
+      label: "Entertainment",
+      value: "entertainment",
+      icon: "i-heroicons-film",
+    },
+    { label: "Utilities", value: "utilities", icon: "i-heroicons-bolt" },
+    { label: "Shopping", value: "shopping", icon: "i-heroicons-shopping-bag" },
+    { label: "Health", value: "health", icon: "i-heroicons-heart" },
+    { label: "Housing", value: "housing", icon: "i-heroicons-home" },
+    { label: "Travel", value: "travel", icon: "i-heroicons-globe-alt" },
+    {
+      label: "Education",
+      value: "education",
+      icon: "i-heroicons-academic-cap",
+    },
+    {
+      label: "Other",
+      value: "other",
+      icon: "i-heroicons-ellipsis-horizontal-circle",
+    },
+  ];
+
   // Actions
   function setMonthlyBudget(amount: number) {
     monthlyBudget.value.amount = amount;
@@ -187,6 +218,7 @@ export const useSpendingStore = defineStore("spending", () => {
     dailyBudget,
     spendingDays,
     daysInMonth,
+    categories,
     setMonthlyBudget,
     addExpense,
     removeExpense,
