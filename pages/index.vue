@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useSpendingStore } from "~/stores/spending";
 import { storeToRefs } from "pinia";
-import MonthlyBudgetCard from "~/components/MonthlyBudgetCard.vue";
-import DailyBudgetCard from "~/components/DailyBudgetCard.vue";
-import RemainingBudgetCard from "~/components/RemainingBudgetCard.vue";
-import CategoryChart from "~/components/CategoryChart.vue";
-import WeeklyView from "~/components/WeeklyView.vue";
-import RecentTransactions from "~/components/RecentTransactions.vue";
-import SpendingOverview from "~/components/SpendingOverview.vue";
+import MonthlyBudgetCard from "~/components/dashboard/MonthlyBudgetCard.vue";
+import DailyBudgetCard from "~/components/dashboard/DailyBudgetCard.vue";
+import RemainingBudgetCard from "~/components/dashboard/RemainingBudgetCard.vue";
+import CategoryChart from "~/components/dashboard/CategoryChart.vue";
+import WeeklyView from "~/components/dashboard/WeeklyView.vue";
+import RecentTransactions from "~/components/dashboard/RecentTransactions.vue";
+import SpendingOverview from "~/components/dashboard/SpendingOverview.vue";
 
 const spendingStore = useSpendingStore();
 const { monthlyBudget, dailyBudget, spendingDays } = storeToRefs(spendingStore);

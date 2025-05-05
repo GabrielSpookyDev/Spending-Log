@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SpendingChart from "./SpendingChart.vue";
+import SpendingChart from "../SpendingChart.vue";
 </script>
 
 <template>
