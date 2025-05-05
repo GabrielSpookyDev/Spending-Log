@@ -6,6 +6,8 @@ import CircleIcon from "~/components/CircleIcon.vue";
 import MonthlyBudgetCard from "~/components/MonthlyBudgetCard.vue";
 import DailyBudgetCard from "~/components/DailyBudgetCard.vue";
 import RemainingBudgetCard from "~/components/RemainingBudgetCard.vue";
+import CategoryChart from "~/components/CategoryChart.vue";
+import WeeklyView from "~/components/WeeklyView.vue";
 
 const spendingStore = useSpendingStore();
 const { monthlyBudget, dailyBudget, spendingDays, expenses } =
@@ -186,75 +188,8 @@ const yearlySpendingData = computed<YearlySpending[]>(() => {
 
     <!-- Category chart and weekly view -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-      <!-- Category chart -->
-      <UCard>
-        <template #header>
-          <div class="flex justify-between items-center">
-            <h3 class="text-lg font-medium">Spending by Category</h3>
-          </div>
-        </template>
-
-        <div class="py-4 flex justify-center">
-          <SpendingChart :height="250" :width="250" />
-        </div>
-      </UCard>
-
-      <!-- Weekly spending view -->
-      <UCard>
-        <template #header>
-          <div class="flex justify-between items-center">
-            <h3 class="text-lg font-medium">Weekly Overview</h3>
-          </div>
-        </template>
-
-        <div class="overflow-x-auto">
-          <table class="w-full">
-            <thead>
-              <tr class="border-b">
-                <th class="text-left py-2 px-2">Day</th>
-                <th class="text-left py-2 px-2">Budget</th>
-                <th class="text-left py-2 px-2">Spent</th>
-                <th class="text-left py-2 px-2">Remaining</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="day in currentWeek"
-                :key="day.date"
-                class="border-b last:border-none hover:bg-gray-50 dark:hover:bg-gray-800"
-              >
-                <td class="py-3 px-2">
-                  <div class="font-medium">
-                    {{
-                      new Date(day.date).toLocaleDateString("en-US", {
-                        weekday: "short",
-                      })
-                    }}
-                  </div>
-                  <div class="text-xs text-gray-500">
-                    {{
-                      new Date(day.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })
-                    }}
-                  </div>
-                </td>
-                <td class="py-3 px-2">{{ formatCurrency(day.budget) }}</td>
-                <td class="py-3 px-2">{{ formatCurrency(day.spent) }}</td>
-                <td
-                  class="py-3 px-2"
-                  :class="
-                    day.remaining >= 0 ? 'text-green-600' : 'text-red-600'
-                  "
-                >
-                  {{ formatCurrency(day.remaining) }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </UCard>
+      <CategoryChart />
+      <WeeklyView :current-week="currentWeek" />
     </div>
 
     <!-- Recent transactions -->
