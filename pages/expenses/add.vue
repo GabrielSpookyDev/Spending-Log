@@ -13,6 +13,11 @@ const newExpense = reactive({
   category: "general",
 });
 
+const formState = reactive({
+  valid: false,
+  errors: {} as Record<string, string[]>,
+});
+
 const categories = [
   { label: "General", value: "general", icon: "i-heroicons-cube" },
   { label: "Food & Dining", value: "food", icon: "i-heroicons-cake" },
@@ -44,8 +49,23 @@ const isValid = computed(() => {
   return newExpense.amount > 0 && newExpense.description.trim() !== "";
 });
 
+function validateForm() {
+  formState.errors = {};
+
+  if (!newExpense.amount || newExpense.amount <= 0) {
+    formState.errors.amount = ["Amount must be greater than 0"];
+  }
+
+  if (!newExpense.description.trim()) {
+    formState.errors.description = ["Description is required"];
+  }
+
+  formState.valid = Object.keys(formState.errors).length === 0;
+  return formState.valid;
+}
+
 function saveExpense() {
-  if (!isValid.value) return;
+  if (!validateForm()) return;
 
   spendingStore.addExpense(newExpense);
   navigateTo("/");
@@ -66,43 +86,44 @@ function saveExpense() {
         </div>
       </template>
 
-      <div class="space-y-6 py-4">
+      <UForm
+        :state="formState"
+        class="space-y-6 py-4"
+        @submit.prevent="saveExpense"
+      >
         <!-- Amount input -->
-        <UFormGroup label="Amount" required>
-          <UInputAddon>
-            <span class="text-gray-500">$</span>
-            <UInput
-              v-model="newExpense.amount"
-              type="number"
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              class="pl-1"
-            />
-          </UInputAddon>
-        </UFormGroup>
+        <UFormField label="Amount" required>
+          <UInput
+            v-model="newExpense.amount"
+            type="number"
+            placeholder="0.00"
+            min="0"
+            step="0.01"
+            class="pl-1"
+          />
+        </UFormField>
 
         <!-- Description input -->
-        <UFormGroup label="Description" required>
+        <UFormField label="Description" required>
           <UInput
             v-model="newExpense.description"
             placeholder="What did you spend on?"
           />
-        </UFormGroup>
+        </UFormField>
 
         <!-- Date input -->
-        <UFormGroup label="Date">
+        <UFormField label="Date">
           <UInput v-model="newExpense.date" type="date" />
-        </UFormGroup>
+        </UFormField>
 
         <!-- Category input -->
-        <UFormGroup label="Category">
+        <UFormField label="Category">
           <USelect
             v-model="newExpense.category"
             :options="categories"
             :icon="selectedCategoryIcon"
           />
-        </UFormGroup>
+        </UFormField>
 
         <!-- Preview card -->
         <div class="mt-6">
@@ -143,12 +164,17 @@ function saveExpense() {
             </div>
           </div>
         </div>
-      </div>
+      </UForm>
 
       <template #footer>
         <div class="flex justify-end gap-2">
           <UButton to="/" color="neutral" variant="ghost"> Cancel </UButton>
-          <UButton color="primary" :disabled="!isValid" @click="saveExpense">
+          <UButton
+            color="primary"
+            type="submit"
+            :disabled="!isValid"
+            @click="saveExpense"
+          >
             Save Expense
           </UButton>
         </div>

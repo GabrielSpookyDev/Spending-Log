@@ -26,11 +26,37 @@ const months = [
 const selectedMonth = ref(monthlyBudget.value.month);
 const selectedYear = ref(monthlyBudget.value.year);
 
+const formState = reactive({
+  valid: true,
+  errors: {} as Record<string, string[]>,
+});
+
 // Generate years (current year ± 5 years)
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
 
+function validateForm() {
+  formState.errors = {};
+
+  if (budgetAmount.value <= 0) {
+    formState.errors.budgetAmount = ["Budget amount must be greater than 0"];
+  }
+
+  if (!selectedMonth.value) {
+    formState.errors.selectedMonth = ["Month is required"];
+  }
+
+  if (!selectedYear.value) {
+    formState.errors.selectedYear = ["Year is required"];
+  }
+
+  formState.valid = Object.keys(formState.errors).length === 0;
+  return formState.valid;
+}
+
 function saveBudget() {
+  if (!validateForm()) return;
+
   monthlyBudget.value.amount = budgetAmount.value;
   monthlyBudget.value.month = selectedMonth.value;
   monthlyBudget.value.year = selectedYear.value;
@@ -60,29 +86,33 @@ const hasChanges = computed(() => {
         </div>
       </template>
 
-      <div class="space-y-6 py-4">
+      <UForm
+        :state="formState"
+        class="space-y-6 py-4"
+        @submit.prevent="saveBudget"
+      >
         <div>
           <h3 class="text-md font-medium mb-4">Monthly Budget</h3>
 
           <div class="grid gap-6 md:grid-cols-2">
-            <UFormGroup
+            <UFormField
               label="Budget Amount"
               help="Set your total spending budget for the month"
+              name="budgetAmount"
+              required
             >
-              <UInputAddon>
-                <span class="text-gray-500">$</span>
-                <UInput
-                  v-model="budgetAmount"
-                  type="number"
-                  placeholder="Enter your monthly budget"
-                  min="0"
-                  step="0.01"
-                  class="pl-1"
-                />
-              </UInputAddon>
-            </UFormGroup>
+              <span class="text-gray-500">$</span>
+              <UInput
+                v-model="budgetAmount"
+                type="number"
+                placeholder="Enter your monthly budget"
+                min="0"
+                step="0.01"
+                class="pl-1"
+              />
+            </UFormField>
 
-            <UFormGroup label="Budget Period">
+            <UFormField label="Budget Period" required>
               <div class="grid grid-cols-2 gap-2">
                 <USelect
                   v-model="selectedMonth"
@@ -90,6 +120,7 @@ const hasChanges = computed(() => {
                     months.map((month) => ({ label: month, value: month }))
                   "
                   placeholder="Select month"
+                  name="selectedMonth"
                 />
                 <USelect
                   v-model="selectedYear"
@@ -100,9 +131,10 @@ const hasChanges = computed(() => {
                     }))
                   "
                   placeholder="Select year"
+                  name="selectedYear"
                 />
               </div>
-            </UFormGroup>
+            </UFormField>
           </div>
         </div>
 
@@ -125,7 +157,7 @@ const hasChanges = computed(() => {
             </div>
           </div>
         </div>
-      </div>
+      </UForm>
 
       <template #footer>
         <div class="flex justify-end gap-2">
