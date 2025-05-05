@@ -3,6 +3,9 @@ import { useSpendingStore } from "~/stores/spending";
 import { storeToRefs } from "pinia";
 import { useFormatters } from "~/composables/useFormatters";
 import CircleIcon from "~/components/CircleIcon.vue";
+import MonthlyBudgetCard from "~/components/MonthlyBudgetCard.vue";
+import DailyBudgetCard from "~/components/DailyBudgetCard.vue";
+import RemainingBudgetCard from "~/components/RemainingBudgetCard.vue";
 
 const spendingStore = useSpendingStore();
 const { monthlyBudget, dailyBudget, spendingDays, expenses } =
@@ -171,92 +174,14 @@ const yearlySpendingData = computed<YearlySpending[]>(() => {
   <div>
     <!-- Top cards row -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <!-- Budget card -->
-      <UCard class="relative overflow-hidden">
-        <div class="flex items-center mb-4">
-          <CircleIcon
-            name="i-heroicons-currency-dollar"
-            bg-color="bg-green-100"
-            icon-color="text-green-600"
-          />
-          <h3 class="text-sm font-medium text-gray-500">Monthly Budget</h3>
-        </div>
-        <p class="text-2xl font-semibold">
-          {{ formatCurrency(monthlyBudget.amount) }}
-        </p>
-
-        <!-- Progress bar -->
-        <div class="mt-4">
-          <div class="flex justify-between text-sm mb-1">
-            <span>{{ percentageSpent }}% spent</span>
-            <span
-              >{{ formatCurrency(totalSpent) }} /
-              {{ formatCurrency(monthlyBudget.amount) }}</span
-            >
-          </div>
-          <UProgress v-model="percentageSpent" :color="progressColor" />
-        </div>
-      </UCard>
-
-      <!-- Daily budget card -->
-      <UCard class="relative overflow-hidden">
-        <div class="flex items-center mb-4">
-          <CircleIcon
-            name="i-heroicons-calendar"
-            bg-color="bg-green-100"
-            icon-color="text-green-600"
-          />
-          <h3 class="text-sm font-medium text-gray-500">Today's Budget</h3>
-        </div>
-        <p class="text-2xl font-semibold">{{ formatCurrency(dailyBudget) }}</p>
-        <div class="mt-4 text-sm text-gray-500 flex justify-between">
-          <span>Spent today: {{ formatCurrency(todayData.spent) }}</span>
-          <span
-            :class="
-              todayData.remaining >= 0 ? 'text-green-600' : 'text-red-600'
-            "
-          >
-            {{ todayData.remaining >= 0 ? "Remaining: " : "Overspent: " }}
-            {{ formatCurrency(Math.abs(todayData.remaining)) }}
-          </span>
-        </div>
-      </UCard>
-
-      <!-- Remaining budget card -->
-      <UCard class="relative overflow-hidden">
-        <div class="flex items-center mb-4">
-          <CircleIcon
-            :name="
-              totalRemaining >= 0
-                ? 'i-heroicons-banknotes'
-                : 'i-heroicons-exclamation-triangle'
-            "
-            :bg-color="totalRemaining >= 0 ? 'bg-green-100' : 'bg-red-100'"
-            :icon-color="
-              totalRemaining >= 0 ? 'text-green-600' : 'text-red-600'
-            "
-          />
-          <h3 class="text-sm font-medium text-gray-500">Remaining Budget</h3>
-        </div>
-        <p
-          :class="`text-2xl font-semibold ${
-            totalRemaining >= 0 ? 'text-green-600' : 'text-red-600'
-          }`"
-        >
-          {{ formatCurrency(Math.abs(totalRemaining)) }}
-          <span class="text-sm font-normal">{{
-            totalRemaining < 0 ? "overspent" : ""
-          }}</span>
-        </p>
-        <p class="mt-4 text-sm text-gray-500">
-          {{
-            new Date().toLocaleDateString("en-US", {
-              month: "long",
-              year: "numeric",
-            })
-          }}
-        </p>
-      </UCard>
+      <MonthlyBudgetCard
+        :monthly-budget="monthlyBudget"
+        :total-spent="totalSpent"
+        :percentage-spent="percentageSpent"
+        :progress-color="progressColor"
+      />
+      <DailyBudgetCard :daily-budget="dailyBudget" :today-data="todayData" />
+      <RemainingBudgetCard :total-remaining="totalRemaining" />
     </div>
 
     <!-- Category chart and weekly view -->
