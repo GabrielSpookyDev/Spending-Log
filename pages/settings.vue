@@ -149,6 +149,7 @@ const hasChanges = computed(() => {
         <div class="flex justify-end gap-2">
           <UButton to="/" color="neutral" variant="ghost"> Cancel </UButton>
           <UButton
+            class="hover:cursor-pointer"
             color="primary"
             :disabled="!hasChanges"
             :loading="false"

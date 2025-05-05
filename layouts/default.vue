@@ -11,6 +11,12 @@ const navigationItems = computed(() => [
     active: route.path === "/",
   },
   {
+    name: "Expenses",
+    to: "/expenses",
+    icon: "i-heroicons-receipt-percent",
+    active: route.path === "/expenses",
+  },
+  {
     name: "Add Expense",
     to: "/expenses/add",
     icon: "i-heroicons-plus",
