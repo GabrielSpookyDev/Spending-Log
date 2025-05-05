@@ -2,6 +2,7 @@
 import { computed } from "vue";
 
 const route = useRoute();
+const { $siteConfig } = useNuxtApp();
 
 const navigationItems = computed(() => [
   {
@@ -38,7 +39,7 @@ const navigationItems = computed(() => [
       class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 md:hidden sticky top-0 z-10 shadow-md"
     >
       <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-xl font-bold">Spending Log</h1>
+        <h1 class="text-xl font-bold">{{ $siteConfig.siteName }}</h1>
       </div>
     </header>
 
@@ -53,7 +54,7 @@ const navigationItems = computed(() => [
           <h1
             class="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent"
           >
-            Spending Log
+            {{ $siteConfig.siteName }}
           </h1>
           <nav class="space-y-2">
             <UButton
