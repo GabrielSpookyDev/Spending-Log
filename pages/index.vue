@@ -2,6 +2,7 @@
 import { useSpendingStore } from "~/stores/spending";
 import { storeToRefs } from "pinia";
 import { useFormatters } from "~/composables/useFormatters";
+import CircleIcon from "~/components/CircleIcon.vue";
 
 const spendingStore = useSpendingStore();
 const { monthlyBudget, dailyBudget, spendingDays, expenses } =
@@ -79,12 +80,11 @@ const recentTransactions = computed(() => {
       <!-- Budget card -->
       <UCard class="relative overflow-hidden">
         <div class="flex items-center mb-4">
-          <div class="p-2 rounded-full bg-blue-100 mr-3">
-            <Icon
-              name="i-heroicons-currency-dollar"
-              class="text-blue-600 w-5 h-5"
-            />
-          </div>
+          <CircleIcon
+            name="i-heroicons-currency-dollar"
+            bg-color="bg-green-100"
+            icon-color="text-green-600"
+          />
           <h3 class="text-sm font-medium text-gray-500">Monthly Budget</h3>
         </div>
         <p class="text-2xl font-semibold">
@@ -107,9 +107,11 @@ const recentTransactions = computed(() => {
       <!-- Daily budget card -->
       <UCard class="relative overflow-hidden">
         <div class="flex items-center mb-4">
-          <div class="p-2 rounded-full bg-green-100 mr-3">
-            <Icon name="i-heroicons-calendar" class="text-green-600 w-5 h-5" />
-          </div>
+          <CircleIcon
+            name="i-heroicons-calendar"
+            bg-color="bg-green-100"
+            icon-color="text-green-600"
+          />
           <h3 class="text-sm font-medium text-gray-500">Today's Budget</h3>
         </div>
         <p class="text-2xl font-semibold">{{ formatCurrency(dailyBudget) }}</p>
@@ -129,22 +131,17 @@ const recentTransactions = computed(() => {
       <!-- Remaining budget card -->
       <UCard class="relative overflow-hidden">
         <div class="flex items-center mb-4">
-          <div
-            :class="`p-2 rounded-full ${
-              totalRemaining >= 0 ? 'bg-green-100' : 'bg-red-100'
-            } mr-3`"
-          >
-            <Icon
-              :name="
-                totalRemaining >= 0
-                  ? 'i-heroicons-banknotes'
-                  : 'i-heroicons-exclamation-triangle'
-              "
-              :class="`${
-                totalRemaining >= 0 ? 'text-green-600' : 'text-red-600'
-              } w-5 h-5`"
-            />
-          </div>
+          <CircleIcon
+            :name="
+              totalRemaining >= 0
+                ? 'i-heroicons-banknotes'
+                : 'i-heroicons-exclamation-triangle'
+            "
+            :bg-color="totalRemaining >= 0 ? 'bg-green-100' : 'bg-red-100'"
+            :icon-color="
+              totalRemaining >= 0 ? 'text-green-600' : 'text-red-600'
+            "
+          />
           <h3 class="text-sm font-medium text-gray-500">Remaining Budget</h3>
         </div>
         <p
@@ -262,9 +259,11 @@ const recentTransactions = computed(() => {
         v-if="recentTransactions.length === 0"
         class="py-8 text-center text-gray-500"
       >
-        <Icon
+        <CircleIcon
           name="i-heroicons-receipt-percent"
-          class="mx-auto h-12 w-12 text-gray-400"
+          bg-color="bg-gray-100"
+          icon-color="text-gray-400"
+          class="mx-auto"
         />
         <h3 class="mt-2 text-sm font-medium">No transactions yet</h3>
         <p class="mt-1 text-sm">Add your first expense to get started.</p>

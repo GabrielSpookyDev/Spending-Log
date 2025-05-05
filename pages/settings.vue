@@ -2,6 +2,7 @@
 import { useSpendingStore } from "~/stores/spending";
 import { storeToRefs } from "pinia";
 import { useFormatters } from "~/composables/useFormatters";
+import CircleIcon from "~/components/CircleIcon.vue";
 
 const spendingStore = useSpendingStore();
 const { monthlyBudget } = storeToRefs(spendingStore);
@@ -50,12 +51,11 @@ const hasChanges = computed(() => {
     <UCard>
       <template #header>
         <div class="flex items-center">
-          <div class="p-2 rounded-full bg-blue-100 mr-3">
-            <Icon
-              name="i-heroicons-cog-6-tooth"
-              class="text-blue-600 w-5 h-5"
-            />
-          </div>
+          <CircleIcon
+            name="i-heroicons-cog-6-tooth"
+            bg-color="bg-blue-100"
+            icon-color="text-blue-600"
+          />
           <h2 class="text-lg font-medium">Budget Settings</h2>
         </div>
       </template>

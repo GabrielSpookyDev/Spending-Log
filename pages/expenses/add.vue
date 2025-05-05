@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useSpendingStore } from "~/stores/spending";
 import { useFormatters } from "~/composables/useFormatters";
+import CircleIcon from "~/components/CircleIcon.vue";
 
 const spendingStore = useSpendingStore();
 const { formatCurrency } = useFormatters();
@@ -56,9 +57,11 @@ function saveExpense() {
     <UCard>
       <template #header>
         <div class="flex items-center">
-          <div class="p-2 rounded-full bg-blue-100 mr-3">
-            <Icon name="i-heroicons-plus" class="text-blue-600 w-5 h-5" />
-          </div>
+          <CircleIcon
+            name="i-heroicons-plus"
+            bg-color="bg-blue-100"
+            icon-color="text-blue-600"
+          />
           <h2 class="text-lg font-medium">Add Expense</h2>
         </div>
       </template>
@@ -108,9 +111,10 @@ function saveExpense() {
             class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
           >
             <div class="flex items-center mb-3">
-              <Icon
+              <CircleIcon
                 :name="selectedCategoryIcon"
-                class="bg-gray-200 dark:bg-gray-700 p-2 rounded-full mr-3 w-10 h-10"
+                bg-color="bg-gray-200 dark:bg-gray-700"
+                icon-color="text-gray-700 dark:text-gray-200"
               />
               <div>
                 <div class="font-medium">

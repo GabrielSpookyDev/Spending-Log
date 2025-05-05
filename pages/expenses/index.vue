@@ -2,6 +2,7 @@
 import { useSpendingStore } from "~/stores/spending";
 import { storeToRefs } from "pinia";
 import { useFormatters } from "~/composables/useFormatters";
+import CircleIcon from "~/components/CircleIcon.vue";
 import type { Expense } from "~/types";
 
 // Define the structure for the expense groups
@@ -85,9 +86,11 @@ function formatDate(dateStr: string): string {
 
     <!-- No expenses state -->
     <UCard v-if="sortedExpenses.length === 0" class="text-center py-8">
-      <Icon
+      <CircleIcon
         name="i-heroicons-receipt-percent"
-        class="mx-auto h-12 w-12 text-gray-400"
+        bg-color="bg-gray-100"
+        icon-color="text-gray-400"
+        class="mx-auto"
       />
       <h3 class="mt-2 text-lg font-medium">No expenses yet</h3>
       <p class="mt-1 text-gray-500">
@@ -124,16 +127,15 @@ function formatDate(dateStr: string): string {
             >
               <div class="flex items-center">
                 <div class="mr-4">
-                  <div class="bg-gray-100 dark:bg-gray-800 p-2 rounded-full">
-                    <Icon
-                      :name="
-                        spendingStore.categories.find(
-                          (c) => c.value === expense.category
-                        )?.icon || 'i-heroicons-cube'
-                      "
-                      class="w-6 h-6 text-gray-600 dark:text-gray-300"
-                    />
-                  </div>
+                  <CircleIcon
+                    :name="
+                      spendingStore.categories.find(
+                        (c) => c.value === expense.category
+                      )?.icon || 'i-heroicons-cube'
+                    "
+                    bg-color="bg-gray-100 dark:bg-gray-800"
+                    icon-color="text-gray-600 dark:text-gray-300"
+                  />
                 </div>
 
                 <div class="flex-grow">
