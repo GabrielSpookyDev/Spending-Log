@@ -8,11 +8,31 @@ const spendingStore = useSpendingStore();
 const { expenses } = storeToRefs(spendingStore);
 const { formatCurrency, formatDate } = useFormatters();
 
+// Define table row interface
+interface TableRow {
+  description: string;
+  date: string;
+  category: string;
+  amount: string;
+}
+
 // Recent transactions
 const recentTransactions = computed(() => {
   return [...expenses.value]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
+});
+
+// Transform data for UTable
+const tableData = computed<TableRow[]>(() => {
+  return recentTransactions.value.map((transaction) => ({
+    description: transaction.description,
+    date: formatDate(transaction.date),
+    category:
+      transaction.category.charAt(0).toUpperCase() +
+      transaction.category.slice(1),
+    amount: formatCurrency(transaction.amount),
+  }));
 });
 </script>
 
@@ -52,32 +72,7 @@ const recentTransactions = computed(() => {
       </div>
     </div>
 
-    <div v-else class="overflow-x-auto">
-      <ul class="divide-y">
-        <li
-          v-for="transaction in recentTransactions"
-          :key="transaction.id"
-          class="py-3 px-2 hover:bg-gray-50 dark:hover:bg-gray-800"
-        >
-          <div class="flex justify-between">
-            <div>
-              <p class="font-medium">{{ transaction.description }}</p>
-              <p class="text-xs text-gray-500">
-                {{ formatDate(transaction.date) }}
-                •
-                {{
-                  transaction.category.charAt(0).toUpperCase() +
-                  transaction.category.slice(1)
-                }}
-              </p>
-            </div>
-            <p class="font-medium text-red-600">
-              -{{ formatCurrency(transaction.amount) }}
-            </p>
-          </div>
-        </li>
-      </ul>
-    </div>
+    <UTable v-else :data="tableData" />
 
     <template v-if="recentTransactions.length > 0" #footer>
       <div class="text-center">

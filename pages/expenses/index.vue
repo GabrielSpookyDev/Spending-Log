@@ -12,6 +12,14 @@ interface ExpenseGroup {
   total: number;
 }
 
+// Define the table row interface
+interface TableRow {
+  description: string;
+  date: string;
+  category: string;
+  amount: string;
+}
+
 const spendingStore = useSpendingStore();
 const { expenses } = storeToRefs(spendingStore);
 const { formatCurrency, formatDate, formatMonthYear } = useFormatters();
@@ -46,19 +54,22 @@ const groupedExpenses = computed<ExpenseGroup[]>(() => {
   return Object.values(groups);
 });
 
+// Create table data for each group
+const tableDataForGroup = (expenses: Expense[]): TableRow[] => {
+  return expenses.map((expense) => ({
+    description: expense.description,
+    date: formatDate(expense.date),
+    category: getCategoryLabel(expense.category),
+    amount: formatCurrency(expense.amount),
+  }));
+};
+
 // Get category label
 function getCategoryLabel(categoryValue: string): string {
   const category = spendingStore.categories.find(
     (c) => c.value === categoryValue
   );
   return category ? category.label : categoryValue;
-}
-
-// Delete expense
-function deleteExpense(id: string) {
-  if (confirm("Are you sure you want to delete this expense?")) {
-    spendingStore.removeExpense(id);
-  }
 }
 </script>
 
@@ -106,49 +117,7 @@ function deleteExpense(id: string) {
         </div>
 
         <UCard>
-          <ul class="divide-y">
-            <li
-              v-for="expense in group.expenses"
-              :key="expense.id"
-              class="py-4 px-4"
-            >
-              <div class="flex items-center">
-                <div class="mr-4">
-                  <CircleIcon
-                    :name="
-                      spendingStore.categories.find(
-                        (c) => c.value === expense.category
-                      )?.icon || 'i-heroicons-cube'
-                    "
-                    bg-color="bg-gray-100 dark:bg-gray-800"
-                    icon-color="text-gray-600 dark:text-gray-300"
-                  />
-                </div>
-
-                <div class="flex-grow">
-                  <div class="font-medium">{{ expense.description }}</div>
-                  <div class="text-sm text-gray-500">
-                    {{ formatDate(expense.date) }} •
-                    {{ getCategoryLabel(expense.category) }}
-                  </div>
-                </div>
-
-                <div class="ml-4 flex flex-col items-end">
-                  <div class="font-medium text-red-600">
-                    -{{ formatCurrency(expense.amount) }}
-                  </div>
-                  <UButton
-                    size="xs"
-                    color="neutral"
-                    variant="ghost"
-                    icon="i-heroicons-trash"
-                    class="mt-2"
-                    @click="deleteExpense(expense.id)"
-                  />
-                </div>
-              </div>
-            </li>
-          </ul>
+          <UTable :data="tableDataForGroup(group.expenses)" />
         </UCard>
       </div>
     </div>

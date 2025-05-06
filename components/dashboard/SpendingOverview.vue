@@ -101,7 +101,7 @@ const yearlySpendingData = computed<YearlySpending[]>(() => {
 </script>
 
 <template>
-  <UCard class="mt-6 hidden md:block">
+  <UCard class="mt-6">
     <template #header>
       <div
         class="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center"

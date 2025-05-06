@@ -36,7 +36,7 @@ const navigationItems = computed(() => [
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Mobile header -->
     <header
-      class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 md:hidden sticky top-0 z-10 shadow-md"
+      class="bg-[#00a63e] text-white p-4 md:hidden sticky top-0 z-10 shadow-md"
     >
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-xl font-bold">{{ $siteConfig.siteName }}</h1>
