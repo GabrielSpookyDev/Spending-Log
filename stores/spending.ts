@@ -202,6 +202,15 @@ export const useSpendingStore = defineStore("spending", () => {
     );
   }
 
+  function updateExpense(id: string, updatedExpense: Omit<Expense, "id">) {
+    const index = state.value.expenses.findIndex(
+      (expense) => expense.id === id
+    );
+    if (index !== -1) {
+      state.value.expenses[index] = { ...updatedExpense, id };
+    }
+  }
+
   // Load state from localStorage
   function loadState() {
     if (!import.meta.client) return;
@@ -252,6 +261,7 @@ export const useSpendingStore = defineStore("spending", () => {
     setMonthlyBudget,
     addExpense,
     removeExpense,
+    updateExpense,
     getTotalSpentThisMonth,
   };
 });

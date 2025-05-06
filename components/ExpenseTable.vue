@@ -39,7 +39,7 @@ const columns: TableColumn<TableRow>[] = [
     header: "Amount",
   },
   {
-    header: "Delete",
+    header: "Actions",
     id: "action",
   },
 ];
@@ -74,13 +74,22 @@ function deleteExpense(id: string) {
 <template>
   <UTable :data="tableData" :columns="columns">
     <template #action-cell="{ row }">
-      <UButton
-        size="sm"
-        color="neutral"
-        variant="ghost"
-        icon="i-heroicons-trash"
-        @click="deleteExpense(row.original.id)"
-      />
+      <div class="flex space-x-2">
+        <UButton
+          size="sm"
+          color="neutral"
+          variant="ghost"
+          icon="i-heroicons-pencil-square"
+          @click="navigateTo(`/expenses/edit/${row.original.id}`)"
+        />
+        <UButton
+          size="sm"
+          color="neutral"
+          variant="ghost"
+          icon="i-heroicons-trash"
+          @click="deleteExpense(row.original.id)"
+        />
+      </div>
     </template>
   </UTable>
 </template>

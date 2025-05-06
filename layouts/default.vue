@@ -36,7 +36,7 @@ const navigationItems = computed(() => [
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <!-- Mobile header -->
     <header
-      class="bg-[#00a63e] text-white p-4 md:hidden sticky top-0 z-10 shadow-md"
+      class="bg-primary text-white p-4 md:hidden sticky top-0 z-10 shadow-md"
     >
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-xl font-bold">{{ $siteConfig.siteName }}</h1>
@@ -51,9 +51,7 @@ const navigationItems = computed(() => [
         class="hidden md:block bg-white dark:bg-gray-800 w-64 shrink-0 shadow-lg rounded-lg mt-6 h-min sticky top-6"
       >
         <div class="py-6 px-4">
-          <h1
-            class="text-2xl font-bold mb-6 text-center bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent"
-          >
+          <h1 class="text-2xl font-bold mb-6 text-center text-primary">
             {{ $siteConfig.siteName }}
           </h1>
           <nav class="space-y-2">
