@@ -3,6 +3,7 @@ import { useSpendingStore } from "~/stores/spending";
 import { storeToRefs } from "pinia";
 import { useFormatters } from "~/composables/useFormatters";
 import CircleIcon from "~/components/CircleIcon.vue";
+import ExpenseTable from "~/components/ExpenseTable.vue";
 import type { Expense } from "~/types";
 
 // Define the structure for the expense groups
@@ -12,17 +13,9 @@ interface ExpenseGroup {
   total: number;
 }
 
-// Define the table row interface
-interface TableRow {
-  description: string;
-  date: string;
-  category: string;
-  amount: string;
-}
-
 const spendingStore = useSpendingStore();
 const { expenses } = storeToRefs(spendingStore);
-const { formatCurrency, formatDate, formatMonthYear } = useFormatters();
+const { formatCurrency, formatMonthYear } = useFormatters();
 
 // Sort expenses by date (newest first)
 const sortedExpenses = computed(() => {
@@ -53,24 +46,6 @@ const groupedExpenses = computed<ExpenseGroup[]>(() => {
 
   return Object.values(groups);
 });
-
-// Create table data for each group
-const tableDataForGroup = (expenses: Expense[]): TableRow[] => {
-  return expenses.map((expense) => ({
-    description: expense.description,
-    date: formatDate(expense.date),
-    category: getCategoryLabel(expense.category),
-    amount: formatCurrency(expense.amount),
-  }));
-};
-
-// Get category label
-function getCategoryLabel(categoryValue: string): string {
-  const category = spendingStore.categories.find(
-    (c) => c.value === categoryValue
-  );
-  return category ? category.label : categoryValue;
-}
 </script>
 
 <template>
@@ -117,7 +92,7 @@ function getCategoryLabel(categoryValue: string): string {
         </div>
 
         <UCard>
-          <UTable :data="tableDataForGroup(group.expenses)" />
+          <ExpenseTable :expenses="group.expenses" />
         </UCard>
       </div>
     </div>

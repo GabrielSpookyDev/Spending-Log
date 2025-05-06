@@ -1,38 +1,17 @@
 <script setup lang="ts">
 import { useSpendingStore } from "~/stores/spending";
 import { storeToRefs } from "pinia";
-import { useFormatters } from "~/composables/useFormatters";
 import CircleIcon from "~/components/CircleIcon.vue";
+import ExpenseTable from "~/components/ExpenseTable.vue";
 
 const spendingStore = useSpendingStore();
 const { expenses } = storeToRefs(spendingStore);
-const { formatCurrency, formatDate } = useFormatters();
-
-// Define table row interface
-interface TableRow {
-  description: string;
-  date: string;
-  category: string;
-  amount: string;
-}
 
 // Recent transactions
 const recentTransactions = computed(() => {
   return [...expenses.value]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
-});
-
-// Transform data for UTable
-const tableData = computed<TableRow[]>(() => {
-  return recentTransactions.value.map((transaction) => ({
-    description: transaction.description,
-    date: formatDate(transaction.date),
-    category:
-      transaction.category.charAt(0).toUpperCase() +
-      transaction.category.slice(1),
-    amount: formatCurrency(transaction.amount),
-  }));
 });
 </script>
 
@@ -72,7 +51,7 @@ const tableData = computed<TableRow[]>(() => {
       </div>
     </div>
 
-    <UTable v-else :data="tableData" />
+    <ExpenseTable v-else :expenses="recentTransactions" />
 
     <template v-if="recentTransactions.length > 0" #footer>
       <div class="text-center">
