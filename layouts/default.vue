@@ -30,6 +30,12 @@ const navigationItems = computed(() => [
     active: route.path === "/settings",
   },
 ]);
+
+const colorMode = useColorMode();
+
+const toggleColorMode = () => {
+  colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
+};
 </script>
 
 <template>
@@ -51,10 +57,24 @@ const navigationItems = computed(() => [
         class="hidden md:block bg-white dark:bg-gray-800 w-64 shrink-0 shadow-lg rounded-lg mt-6 h-min sticky top-6"
       >
         <div class="py-6 px-4">
-          <h1 class="text-2xl font-bold mb-6 text-center text-primary">
-            {{ $siteConfig.siteName }}
-          </h1>
-          <nav class="space-y-2">
+          <div class="flex justify-between">
+            <h1 class="text-2xl font-bold text-center text-primary">
+              {{ $siteConfig.siteName }}
+            </h1>
+            <UButton
+              :icon="
+                colorMode.value === 'dark'
+                  ? 'i-heroicons-sun-20-solid'
+                  : 'i-heroicons-moon-20-solid'
+              "
+              color="gray"
+              variant="ghost"
+              aria-label="Theme"
+              size="xl"
+              @click="toggleColorMode"
+            />
+          </div>
+          <nav class="space-y-2 mt-6">
             <UButton
               v-for="item in navigationItems"
               :key="item.name"

@@ -107,20 +107,6 @@ function generateChartData() {
     );
   });
 
-  // If no expenses, show example data
-  if (currentExpenses.length === 0) {
-    chartData.value = {
-      labels: ["No expenses yet"],
-      datasets: [
-        {
-          backgroundColor: ["#e2e8f0"],
-          data: [100],
-        },
-      ],
-    };
-    return;
-  }
-
   // Group by category
   currentExpenses.forEach((expense) => {
     const { category, amount } = expense;
@@ -175,8 +161,7 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-col items-center">
-    <!-- Add a fixed height container to prevent movement -->
+  <div class="flex flex-col items-center relative">
     <div class="h-[300px] w-full flex items-center justify-center">
       <Doughnut
         :data="chartData"
@@ -184,16 +169,6 @@ watch(
         :height="props.height"
         :width="props.width"
       />
-    </div>
-
-    <div
-      v-if="
-        chartData.labels.length === 1 &&
-        chartData.labels[0] === 'No expenses yet'
-      "
-      class="mt-4 text-sm text-gray-500 text-center"
-    >
-      Add expenses to see your spending breakdown by category
     </div>
   </div>
 </template>
