@@ -7,7 +7,11 @@ import DataImportComponent from "~/components/settings/DataImportComponent.vue";
 import DataExportComponent from "~/components/settings/DataExportComponent.vue";
 import ExampleDataFormat from "~/components/settings/ExampleDataFormat.vue";
 import type { Expense } from "~/types";
+import { useI18n } from "vue-i18n";
 
+type LocaleCode = "en" | "pt_br";
+
+const { locale, locales, setLocale } = useI18n();
 const spendingStore = useSpendingStore();
 const { monthlyBudget, expenses } = storeToRefs(spendingStore);
 
@@ -18,6 +22,13 @@ const selectedYear = ref(monthlyBudget.value.year);
 const formState = reactive({
   valid: true,
   errors: {} as Record<string, string[]>,
+});
+
+const languageOptions = computed(() => {
+  return locales.value.map((locale) => ({
+    label: locale.name,
+    value: locale.code,
+  }));
 });
 
 function validateForm() {
@@ -55,6 +66,10 @@ const hasChanges = computed(() => {
     selectedYear.value !== monthlyBudget.value.year
   );
 });
+
+function updateLocale(newLocale: LocaleCode) {
+  setLocale(newLocale);
+}
 
 // Export data functionality
 function handleExportData() {
@@ -164,6 +179,22 @@ function handleImportData(data: {
         class="space-y-6 py-4"
         @submit.prevent="saveBudget"
       >
+        <!-- Language Settings Section -->
+        <div>
+          <h3 class="text-md font-medium mb-4">Language Settings</h3>
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-gray-600"
+              >Select your preferred language:</span
+            >
+            <USelect
+              v-model="locale"
+              :items="languageOptions"
+              class="w-48"
+              @update:model-value="updateLocale"
+            />
+          </div>
+        </div>
+
         <!-- Budget Settings Section -->
         <BudgetSettingsForm
           v-model:budget-amount="budgetAmount"

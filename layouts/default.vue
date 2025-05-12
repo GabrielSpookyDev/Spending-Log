@@ -3,31 +3,32 @@ import { computed } from "vue";
 
 const route = useRoute();
 const { $siteConfig } = useNuxtApp();
+const { locale } = useI18n();
 
 const navigationItems = computed(() => [
   {
     name: "Dashboard",
-    to: "/",
+    to: `/${locale.value}`,
     icon: "i-heroicons-home",
-    active: route.path === "/",
+    active: route.path === `/${locale.value}`,
   },
   {
     name: "Expenses",
-    to: "/expenses",
+    to: `/${locale.value}/expenses`,
     icon: "i-heroicons-receipt-percent",
-    active: route.path === "/expenses",
+    active: route.path === `/${locale.value}/expenses`,
   },
   {
     name: "Add Expense",
-    to: "/expenses/add",
+    to: `/${locale.value}/expenses/add`,
     icon: "i-heroicons-plus",
-    active: route.path === "/expenses/add",
+    active: route.path === `/${locale.value}/expenses/add`,
   },
   {
     name: "Settings",
-    to: "/settings",
+    to: `/${locale.value}/settings`,
     icon: "i-heroicons-cog-6-tooth",
-    active: route.path === "/settings",
+    active: route.path === `/${locale.value}/settings`,
   },
 ]);
 

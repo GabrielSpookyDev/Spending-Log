@@ -1,9 +1,22 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
+import * as locales from "@nuxt/ui/locale";
 
 const route = useRoute();
 const { currentIcon } = usePageIcons();
 const { $siteConfig } = useNuxtApp();
+
+const { locale } = useI18n();
+
+const lang = computed(() => locales[locale.value].code);
+const dir = computed(() => locales[locale.value].dir);
+
+useHead({
+  htmlAttrs: {
+    lang,
+    dir,
+  },
+});
 
 // Define the base site name from the plugin
 const siteName = $siteConfig.siteName;
@@ -16,9 +29,14 @@ const pageTitles = {
   "/settings": "Settings",
 };
 
+// Define a type for the keys of pageTitles
+type PagePath = keyof typeof pageTitles;
+
 // Compute current page title
 const pageTitle = computed(() => {
-  const currentPageTitle = pageTitles[route.path] || "";
+  // Remove locale prefix from path for title lookup
+  const pathWithoutLocale = route.path.replace(`/${locale.value}`, "");
+  const currentPageTitle = pageTitles[pathWithoutLocale as PagePath] || "";
   return currentPageTitle ? `${currentPageTitle} | ${siteName}` : siteName;
 });
 
@@ -33,7 +51,7 @@ useHead({
 <template>
   <div>
     <NuxtLayout>
-      <UApp>
+      <UApp :locale="locales[locale]">
         <NuxtPage />
       </UApp>
     </NuxtLayout>

@@ -3,6 +3,7 @@ import { useSpendingStore } from "~/stores/spending";
 import { useFormatters } from "~/composables/useFormatters";
 import type { TableColumn } from "@nuxt/ui";
 import type { Expense } from "~/types";
+import { useI18n } from "vue-i18n";
 
 // Define the table row interface
 interface TableRow {
@@ -19,6 +20,7 @@ const props = defineProps<{
 
 const spendingStore = useSpendingStore();
 const { formatCurrency, formatDate } = useFormatters();
+const { locale } = useI18n();
 
 // Define columns with delete action column
 const columns: TableColumn<TableRow>[] = [
@@ -80,7 +82,7 @@ function deleteExpense(id: string) {
           color="neutral"
           variant="ghost"
           icon="i-heroicons-pencil-square"
-          @click="navigateTo(`/expenses/edit/${row.original.id}`)"
+          @click="navigateTo(`/${locale}/expenses/edit/${row.original.id}`)"
         />
         <UButton
           size="sm"

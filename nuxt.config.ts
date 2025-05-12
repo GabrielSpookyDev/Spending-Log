@@ -13,8 +13,23 @@ export default defineNuxtConfig({
     "@nuxt/scripts",
     "@nuxt/test-utils",
     "@nuxt/ui",
+    "@nuxtjs/i18n",
   ],
+
   css: ["~/assets/css/main.css"],
+
+  i18n: {
+    locales: [
+      {
+        code: "en",
+        name: "English",
+      },
+      {
+        code: "pt_br",
+        name: "Português",
+      },
+    ],
+  },
 
   colorMode: {
     preference: "system", // default value of $colorMode.preference
