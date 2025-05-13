@@ -8,6 +8,7 @@ import DataExportComponent from "~/components/settings/DataExportComponent.vue";
 import ExampleDataFormat from "~/components/settings/ExampleDataFormat.vue";
 import type { Expense } from "~/types";
 import { useI18n } from "vue-i18n";
+import type { AccordionItem } from "@nuxt/ui";
 
 type LocaleCode = "en" | "pt_br";
 
@@ -158,6 +159,24 @@ function handleImportData(data: {
     return false;
   }
 }
+
+const accordionItems = ref<AccordionItem[]>([
+  {
+    label: "Budget Settings",
+    icon: "i-heroicons-banknotes",
+    slot: "budget",
+  },
+  {
+    label: "Data Management",
+    icon: "i-heroicons-circle-stack",
+    slot: "data",
+  },
+  {
+    label: "Language Settings",
+    icon: "i-heroicons-language",
+    slot: "language",
+  },
+]);
 </script>
 
 <template>
@@ -170,7 +189,7 @@ function handleImportData(data: {
             bg-color="bg-blue-100"
             icon-color="text-blue-600"
           />
-          <h2 class="text-lg font-medium">Budget Settings</h2>
+          <h2 class="ml-2 text-lg font-medium">Settings</h2>
         </div>
       </template>
 
@@ -179,58 +198,63 @@ function handleImportData(data: {
         class="space-y-6 py-4"
         @submit.prevent="saveBudget"
       >
-        <!-- Language Settings Section -->
-        <div>
-          <h3 class="text-md font-medium mb-4">Language Settings</h3>
-          <div class="flex items-center gap-4">
-            <span class="text-sm text-gray-600"
-              >Select your preferred language:</span
-            >
-            <USelect
-              v-model="locale"
-              :items="languageOptions"
-              class="w-48"
-              @update:model-value="updateLocale"
+        <UAccordion
+          :items="accordionItems"
+          :default-value="['0']"
+          type="multiple"
+        >
+          <template #budget>
+            <BudgetSettingsForm
+              v-model:budget-amount="budgetAmount"
+              v-model:selected-month="selectedMonth"
+              v-model:selected-year="selectedYear"
+              :form-state="formState"
+              class="py-4"
             />
-          </div>
-        </div>
+          </template>
 
-        <!-- Budget Settings Section -->
-        <BudgetSettingsForm
-          v-model:budget-amount="budgetAmount"
-          v-model:selected-month="selectedMonth"
-          v-model:selected-year="selectedYear"
-          :form-state="formState"
-        />
+          <template #data>
+            <div class="py-4 space-y-6">
+              <div class="grid gap-6 md:grid-cols-2">
+                <DataImportComponent @import-data="handleImportData" />
+                <DataExportComponent @export-data="handleExportData" />
+              </div>
+              <ExampleDataFormat />
+            </div>
+          </template>
 
-        <!-- Import/Export Section -->
-        <div>
-          <h3 class="text-md font-medium mb-4">Data Management</h3>
+          <template #language>
+            <div class="py-4">
+              <div class="flex items-center gap-4">
+                <span class="text-sm text-gray-600"
+                  >Select your preferred language:</span
+                >
+                <USelect
+                  v-model="locale"
+                  :items="languageOptions"
+                  class="w-48"
+                  @update:model-value="updateLocale"
+                />
+              </div>
+            </div>
+          </template>
+        </UAccordion>
 
-          <div class="grid gap-6 md:grid-cols-2">
-            <DataImportComponent @import-data="handleImportData" />
-            <DataExportComponent @export-data="handleExportData" />
-          </div>
-
-          <!-- Example Data Format -->
-          <ExampleDataFormat />
-        </div>
-      </UForm>
-
-      <template #footer>
-        <div class="flex justify-end gap-2">
+        <div
+          class="flex justify-end gap-2 pt-4 border-t border-gray-200 dark:border-gray-700"
+        >
           <UButton to="/" color="neutral" variant="ghost"> Cancel </UButton>
           <UButton
             class="hover:cursor-pointer"
             color="primary"
-            :disabled="!hasChanges"
+            :disabled="!hasChanges || !formState.valid"
             :loading="false"
-            @click="saveBudget"
+            type="submit"
           >
-            Save Budget
+            Save Settings
           </UButton>
         </div>
-      </template>
+      </UForm>
     </UCard>
   </div>
 </template>
